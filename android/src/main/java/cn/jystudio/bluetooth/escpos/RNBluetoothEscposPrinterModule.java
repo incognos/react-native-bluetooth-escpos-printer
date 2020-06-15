@@ -144,6 +144,7 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
                 heigthTimes = options.hasKey("heigthtimes") ? options.getInt("heigthtimes") : 0;
                 fonttype = options.hasKey("fonttype") ? options.getInt("fonttype") : 0;
             }
+            Log.i(TAG, "printText: " + text);
             String toPrint = text;
 //            if ("UTF-8".equalsIgnoreCase(encoding)) {
 //                byte[] b = text.getBytes("UTF-8");
@@ -151,7 +152,9 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
 //            }
 
             byte[] bytes = PrinterCommand.POS_Print_Text(toPrint, encoding, codepage, widthTimes, heigthTimes, fonttype);
+            Log.i(TAG, "printText - sending byte");
             if (sendDataByte(bytes)) {
+                Log.d(TAG, "printText - sent byte");
                 promise.resolve(null);
             } else {
                 promise.reject("COMMAND_NOT_SEND");
@@ -456,10 +459,13 @@ public class RNBluetoothEscposPrinterModule extends ReactContextBaseJavaModule
     }    
 
     private boolean sendDataByte(byte[] data) {
-        if (data==null || mService.getState() != BluetoothService.STATE_CONNECTED) {
+        Log.i(TAG, "sendDataByte - called");
+        if (data == null || mService.getState() != BluetoothService.STATE_CONNECTED) {
+            Log.i(TAG, "sendDataByte - not connected");
             return false;
         }
         mService.write(data);
+        Log.i(TAG, "sendDataByte - sent");
         return true;
     }
 
